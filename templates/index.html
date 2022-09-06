@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Compiler | VS Developers</title>
+    <style>
+      * {
+        margin: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: larger;
+      }
+      .container {
+        width: 100vw;
+        height: 100vh;
+        background-color: azure;
+        display: flex;
+        position: relative;
+      }
+      .leftcontainer,
+      .rightcontainer {
+        width: 50%;
+        height: 100%;
+      }
+      .leftcontainer {
+        background-color: bisque;
+      }
+      .rightcontainer {
+        background-color: beige;
+        display: flex;
+        flex-direction: column;
+      }
+      .navigation {
+        height: 10vh;
+        background-color: aqua;
+        display: flex;
+        justify-content: center;
+      }
+      .returncontainer {
+        border: 1px solid black;
+        height: 50%;
+        margin-bottom: 1px;
+      }
+      .textcontainer {
+        background-color: white;
+        border: 1px solid grey;
+        margin: 5px;
+        border-radius: 10px;
+        height: 75%;
+        width: 98%;
+        padding: 10px;
+      }
+      .navitems {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .btn {
+        padding: 10px;
+        margin: 10px;
+        border-radius: 5px;
+        background-color: burlywood;
+        border: 1px solid grey;
+      }
+      button.btn {
+        cursor: pointer;
+      }
+      button.btn:hover {
+        background-color: blueviolet;
+      }
+      button.btn:active {
+        background-color: brown;
+      }
+      .compiler {
+        position: relative;
+      }
+      #editor {
+        position: relative;
+        width: 50vw;
+        height: 90vh;
+      }
+      .ace_scroller {
+        width: 90vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="leftcontainer">
+        <div class="navigation">
+          <div class="navitems">
+            <select name="" id="lang" class="btn">
+              <option value="python" selected>Python</option>
+              <option value="java">Java</option>
+              <option value="c_cpp">Cpp</option>
+            </select>
+          </div>
+          <div class="navitems">
+            <button class="btn" id="runbtn">Run</button>
+          </div>
+        </div>
+        <div class="compiler">
+          <div id="editor">#Code Here</div>
+        </div>
+      </div>
+      <div class="rightcontainer">
+        <div class="returncontainer">
+          <h1>Input</h1>
+          <textarea class="textcontainer" id="stdin"></textarea>
+        </div>
+        <div class="returncontainer">
+          <h1>Output</h1>
+          <textarea class="textcontainer" id="stdout"></textarea>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.10.0/ace.js"
+    integrity="sha512-7s3F2rOCm3IxjF8NjYsmlhE8gNOiaj2i9Uq6MZch73ApkLH2/iuoB7q3Z4NFiS8GTmRhyHKSKulosEgwDZf2Iw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script>
+    $(document).ready(() => {
+      let mode = "python";
+      document.getElementById("editor").style.fontSize = "15px";
+      var editor = ace.edit("editor");
+      editor.session.setMode("ace/mode/python");
+      $("#lang").change(() => {
+        sel = document.getElementById("lang");
+        mode = sel.options[sel.selectedIndex].value;
+        editor.session.setMode("ace/mode/" + mode);
+        // editor.setValue(boilerplate[sel.selectedIndex]);
+        setsample(mode);
+      });
+      $("#runbtn").click(() => {
+        let script = ace.edit("editor").getValue();
+        let input = $("#stdin").val();
+        let program = {
+          script: script,
+          lang: mode,
+          stdin: input,
+        };
+        console.log;
+        $.ajax({
+          url: "/",
+          method: "post",
+
+          data: program,
+
+          success: (result) => {
+            $("#stdout").val(result["output"]);
+            $("stdin").val("");
+          },
+        });
+      });
+    });
+
+    function setsample(data) {
+      if (data == "c_cpp" || data == "java" || data == "python") {
+        return $.ajax({
+          url: "/sample/" + data,
+          method: "get",
+          success: (result) => {
+            ace.edit("editor").setValue(result);
+          },
+        });
+      }
+    }
+  </script>
+</html>
