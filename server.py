@@ -29,11 +29,6 @@ def get():
         
     return render_template("index.html")
 
-@app.route("/sample/<name>",methods=["GET"])
-def set(name):
-    if name=="python" or name=="java" or name=="c_cpp":
-        with open(f"app/{name}/{name}.txt","r") as file:
-            data=file.readlines()
-            data=("").join(data)
-            return data
-    return {}
+
+if __name__=="__main__":
+    app.run()
