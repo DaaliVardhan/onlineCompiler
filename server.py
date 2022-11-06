@@ -13,7 +13,7 @@ def get():
         lang={
             "python":"python3",
             "java":"java",
-            "c_cpp":"cpp"
+            "c_cpp":"cpp17"
         }
 
         body={"script": data["script"],
